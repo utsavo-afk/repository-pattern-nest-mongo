@@ -1,0 +1,36 @@
+version: '3'
+services:
+
+  db:
+    image: mongo:latest
+    container_name: mongodb_container
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rootuser
+      - MONGO_INITDB_ROOT_PASSWORD=rootpass
+      - MONGO_DATABASE=pokedb
+    volumes:
+      - mongodb-data:/data/db
+
+  dbGui:
+    image: mongo-express:latest
+    container_name: mongo_express_container
+    restart: always
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=rootuser
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=rootpass
+      - ME_CONFIG_MONGODB_SERVER=mongodb_container
+    ports:
+      - 8081:8081
+    depends_on:
+      - db
+
+networks:
+  default:
+    name: mongo-experss-network
+
+volumes:
+  mongodb-data:
+    driver: local
